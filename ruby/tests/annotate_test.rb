@@ -511,4 +511,97 @@ describe "Junit annotate plugin parser" do
       There were no failures/errors 🙌
     OUTPUT
   end
+
+  it "handles tests bundled up in many tarballs" do
+    output, status = Open3.capture2e("#{__dir__}/../bin/annotate", "#{__dir__}/no-test-failures.tgz", "#{__dir__}/two-test-failures.tgz")
+    assert_equal <<~OUTPUT, output
+Parsing /no-test-failures/junit-1.xml
+Parsing /no-test-failures/junit-2.xml
+Parsing /no-test-failures/junit-3.xml
+Parsing /two-test-failures/junit-1.xml
+Parsing /two-test-failures/junit-2.xml
+Parsing /two-test-failures/junit-3.xml
+--- ❓ Checking failures
+14 testcases found
+There are 4 failures/errors 😭
+--- ✍️ Preparing annotation
+4 failures:
+
+<details>
+<summary><code>Account#maximum_jobs_added_by_pipeline_changer returns 250 by default in spec.models.account_spec</code></summary>
+
+<p>expected: 250 got: 500 (compared using eql?)</p>
+
+<pre><code>Failure/Error: expect(account.maximum_jobs_added_by_pipeline_changer).to eql(250)
+
+  expected: 250
+       got: 500
+
+  (compared using eql?)
+./spec/models/account_spec.rb:78:in `block (3 levels) in &lt;top (required)&gt;&#39;
+./spec/support/database.rb:16:in `block (2 levels) in &lt;top (required)&gt;&#39;
+./spec/support/log.rb:17:in `run&#39;
+./spec/support/log.rb:66:in `block (2 levels) in &lt;top (required)&gt;&#39;</code></pre>
+
+in <a href=\"#1\">Job #1</a>
+</details>
+
+<details>
+<summary><code>Account#maximum_jobs_added_by_pipeline_changer returns 700 if the account is XYZ in spec.models.account_spec</code></summary>
+
+<p>expected: 700 got: 500 (compared using eql?)</p>
+
+<pre><code>Failure/Error: expect(account.maximum_jobs_added_by_pipeline_changer).to eql(250)
+
+  expected: 700
+       got: 500
+
+  (compared using eql?)
+./spec/models/account_spec.rb:78:in `block (3 levels) in &lt;top (required)&gt;&#39;
+./spec/support/database.rb:16:in `block (2 levels) in &lt;top (required)&gt;&#39;
+./spec/support/log.rb:17:in `run&#39;
+./spec/support/log.rb:66:in `block (2 levels) in &lt;top (required)&gt;&#39;</code></pre>
+
+in <a href=\"#2\">Job #2</a>
+</details>
+
+<details>
+<summary><code>Account#maximum_jobs_added_by_pipeline_changer returns 700 if the account is XYZ in spec.models.account_spec</code></summary>
+
+<p>expected: 700 got: 500 (compared using eql?)</p>
+
+<pre><code>Failure/Error: expect(account.maximum_jobs_added_by_pipeline_changer).to eql(250)
+
+  expected: 700
+       got: 500
+
+  (compared using eql?)
+./spec/models/account_spec.rb:78:in `block (3 levels) in &lt;top (required)&gt;&#39;
+./spec/support/database.rb:16:in `block (2 levels) in &lt;top (required)&gt;&#39;
+./spec/support/log.rb:17:in `run&#39;
+./spec/support/log.rb:66:in `block (2 levels) in &lt;top (required)&gt;&#39;</code></pre>
+
+in <a href=\"#3\">Job #3</a>
+</details>
+
+<details>
+<summary><code>Account#maximum_jobs_added_by_pipeline_changer returns 250 by default in spec.models.account_spec</code></summary>
+
+<p>expected: 250 got: 500 (compared using eql?)</p>
+
+<pre><code>Failure/Error: expect(account.maximum_jobs_added_by_pipeline_changer).to eql(250)
+
+  expected: 250
+       got: 500
+
+  (compared using eql?)
+./spec/models/account_spec.rb:78:in `block (3 levels) in &lt;top (required)&gt;&#39;
+./spec/support/database.rb:16:in `block (2 levels) in &lt;top (required)&gt;&#39;
+./spec/support/log.rb:17:in `run&#39;
+./spec/support/log.rb:66:in `block (2 levels) in &lt;top (required)&gt;&#39;</code></pre>
+
+in <a href=\"#3\">Job #3</a>
+</details>
+OUTPUT
+  end
 end
