@@ -11,19 +11,22 @@ require 'tmpdir'
 abort("Usage: annotate <junits-dir>") unless ARGV.first
 junits_dir = ""
 temporary_dir = Dir.mktmpdir
-ARGV.each do |argument|
-  if Dir.exist?(argument)
-    junits_dir = argument
-  elsif File.exist?(argument) && argument.match('\.tgz')
-    junits_dir = temporary_dir
-    path_to_archive = File.expand_path(argument)
-    `tar xf #{path_to_archive} -C #{junits_dir}`
-    # this is horrible, but otherwise it will attempt to process the archive as an XML file
-    File.unlink(path_to_archive)
-  else
-    abort("#{junits_dir} does not exist, or the input isn't accepted")
-  end
+argument=ARGV.first
+STDERR.puts(argument)
+if Dir.exist?(argument)
+  junits_dir = argument
+elsif File.exist?(argument) && argument.match('\.tgz')
+  junits_dir = temporary_dir
+  path_to_archive = File.expand_path(argument)
+  `tar xf #{path_to_archive} -C #{junits_dir}`
+  # this is horrible, but otherwise it will attempt to process the archive as an XML file
+  File.unlink(path_to_archive)
+else
+  abort("#{junits_dir} does not exist, or the input isn't accepted")
 end
+
+
+
 
 job_pattern = ENV['BUILDKITE_PLUGIN_JUNIT_ANNOTATE_JOB_UUID_FILE_PATTERN']
 job_pattern = '-(.*).xml' if !job_pattern || job_pattern.empty?
@@ -34,7 +37,16 @@ failure_format = 'classname' if !failure_format || failure_format.empty?
 class Failure < Struct.new(:name, :failed_test, :body, :job, :type, :message)
 end
 
+Dir.glob(File.join(junits_dir, ["**", "*.tgz"])).each do |tarball|
+  path_to_archive = File.expand_path(tarball)
+  `tar xf #{path_to_archive} -C #{junits_dir}`
+  # this is horrible, but otherwise it will attempt to process the archive as an XML file
+  File.unlink(path_to_archive)
+end
+
 junit_report_files = Dir.glob(File.join(junits_dir, "**", "*"))
+
+
 testcases = 0
 failures = []
 

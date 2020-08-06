@@ -1,5 +1,10 @@
 version: '2'
 services:
+  lint:
+    image: buildkite/plugin-linter
+    command: ['--id', 'simpsonjulian/buildkite-annotate']
+    volumes:
+      - ".:/plugin:ro"
   plugin:
     image: buildkite/plugin-tester:latest@sha256:9fc083858d97a83b44b311e3b9c81333469e683eb292c7df08502ae4dd2732f7
     volumes:
@@ -12,3 +17,5 @@ services:
     working_dir: /src
     volumes:
       - "./ruby:/src"
+
+
