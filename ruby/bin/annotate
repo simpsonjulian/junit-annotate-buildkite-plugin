@@ -18,6 +18,8 @@ ARGV.each do |argument|
     junits_dir = temporary_dir
     path_to_archive = File.expand_path(argument)
     `tar xf #{path_to_archive} -C #{junits_dir}`
+    # this is horrible, but otherwise it will attempt to process the archive as an XML file
+    File.unlink(path_to_archive)
   else
     abort("#{junits_dir} does not exist, or the input isn't accepted")
   end
