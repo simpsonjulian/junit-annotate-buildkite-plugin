@@ -501,7 +501,7 @@ describe "Junit annotate plugin parser" do
   end
 
   it "handles tests bundled up in a tarball" do
-    output, status = Open3.capture2e("#{__dir__}/../bin/annotate", "#{__dir__}/no-test-failures.tgz")
+    output, status = Open3.capture2e("#{__dir__}/../bin/annotate", "#{__dir__}/tgz-no-test-failures")
     assert_equal <<~OUTPUT, output
       Parsing /no-test-failures/junit-1.xml
       Parsing /no-test-failures/junit-2.xml
@@ -513,7 +513,7 @@ describe "Junit annotate plugin parser" do
   end
 
   it "handles tests bundled up in many tarballs" do
-    output, status = Open3.capture2e("#{__dir__}/../bin/annotate", "#{__dir__}/no-test-failures.tgz", "#{__dir__}/two-test-failures.tgz")
+    output, status = Open3.capture2e("#{__dir__}/../bin/annotate", "#{__dir__}/tgz-all-test-failures")
     assert_equal <<~OUTPUT, output
 Parsing /no-test-failures/junit-1.xml
 Parsing /no-test-failures/junit-2.xml

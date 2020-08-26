@@ -9,23 +9,10 @@ require 'tmpdir'
 # STDOUT that summarizes any failures.
 
 abort("Usage: annotate <junits-dir>") unless ARGV.first
-junits_dir = ""
-temporary_dir = Dir.mktmpdir
-argument=ARGV.first
-if Dir.exist?(argument)
-  junits_dir = argument
-elsif File.exist?(argument) && argument.match('\.tgz')
-  junits_dir = temporary_dir
-  path_to_archive = File.expand_path(argument)
-  `tar xf #{path_to_archive} --no-same-owner --no-same-permissions -C #{junits_dir}`
-  # this is horrible, but otherwise it will attempt to process the archive as an XML file
-  File.unlink(path_to_archive)
-else
+junits_dir = ARGV.first
+unless Dir.exist?(junits_dir)
   abort("#{junits_dir} does not exist, or the input isn't accepted")
 end
-
-
-
 
 job_pattern = ENV['BUILDKITE_PLUGIN_JUNIT_ANNOTATE_JOB_UUID_FILE_PATTERN']
 job_pattern = '-(.*).xml' if !job_pattern || job_pattern.empty?
@@ -38,12 +25,10 @@ end
 
 Dir.glob(File.join(junits_dir, ["**", "*.tgz"])).each do |tarball|
   path_to_archive = File.expand_path(tarball)
-  `tar xf #{path_to_archive} -C #{junits_dir}`
-  # this is horrible, but otherwise it will attempt to process the archive as an XML file
-  File.unlink(path_to_archive)
+  `tar xf #{path_to_archive} --no-same-owner --no-same-permissions -C #{junits_dir}`
 end
 
-junit_report_files = Dir.glob(File.join(junits_dir, "**", "*"))
+junit_report_files = Dir.glob(File.join(junits_dir, "**", "*")).select {|item| ! item.match(/\.tgz$/)}
 
 
 testcases = 0
@@ -70,7 +55,7 @@ def message_content(element)
 end
 
 junit_report_files.sort.each do |file|
-  next if File.directory?(file)
+    next if File.directory?(file)
 
   STDERR.puts "Parsing #{file.sub(junits_dir, '')}"
   job = File.basename(file)[/#{job_pattern}/, 1]
