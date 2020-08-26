@@ -18,7 +18,7 @@ if Dir.exist?(argument)
 elsif File.exist?(argument) && argument.match('\.tgz')
   junits_dir = temporary_dir
   path_to_archive = File.expand_path(argument)
-  `tar xf #{path_to_archive} -C #{junits_dir}`
+  `tar xf #{path_to_archive} --no-same-owner --no-same-permissions -C #{junits_dir}`
   # this is horrible, but otherwise it will attempt to process the archive as an XML file
   File.unlink(path_to_archive)
 else
