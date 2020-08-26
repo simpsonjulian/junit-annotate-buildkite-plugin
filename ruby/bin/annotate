@@ -12,7 +12,6 @@ abort("Usage: annotate <junits-dir>") unless ARGV.first
 junits_dir = ""
 temporary_dir = Dir.mktmpdir
 argument=ARGV.first
-STDERR.puts(argument)
 if Dir.exist?(argument)
   junits_dir = argument
 elsif File.exist?(argument) && argument.match('\.tgz')
