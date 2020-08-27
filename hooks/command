@@ -12,6 +12,7 @@ annotation_dir="$(pwd)/$(mktemp -d "junit-annotate-plugin-annotation-tmp.XXXXXXX
 annotation_path="${annotation_dir}/annotation.md"
 
 function cleanup {
+  find "${artifacts_dir}" -user root -exec sudo chown buildkite-agent:buildkite-agent {} \;
   rm -rf "${artifacts_dir}"
   rm -rf "${annotation_dir}"
 }
